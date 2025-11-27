@@ -6,9 +6,8 @@ using System.Web;
 
 namespace Library.Domain.Dtos
 {
-    public class BookInventoryInfo
+    public class ChangeBookDto
     {
-        public Book Book { get; set; }
-        public int Amount { get; set; }
+        
     }
 }

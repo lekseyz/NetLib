@@ -10,11 +10,12 @@ namespace Library.Application.Abstraction
 {
     internal interface ILibraryService
     {
-        IEnumerable<BookInventoryInfo> GetBooks();
+        IEnumerable<Book> GetBooks();
         Book Add(string isbn, string author, string title, string description);
+        Book Add(string isbn);
         void Delete(string isbn);
         Book Get(string isbn);
-        Book Change(string isbn);
+        Book Change(string isbn, string description);
         void BorrowBook(string isbn, Guid userId);
         void ReturnBook(string isbn, Guid userId);
     }

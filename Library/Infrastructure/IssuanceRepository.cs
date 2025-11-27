@@ -99,7 +99,7 @@ WHERE UserId = @UserId AND Isbn = @Isbn;";
             var sql = @"
 UPDATE Issues
 SET ReturnDate = @ReturnDate
-WHERE Id = @Id;";
+WHERE Id = @Id AND ReturnDate IS NULL;";
 
             using (var connection = DataBase.CreateConnection())
             {

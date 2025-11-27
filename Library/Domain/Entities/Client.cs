@@ -34,5 +34,14 @@ namespace Library.Domain.Entities
 
             return new Client(Guid.NewGuid(), name, passportId, DateTime.Now);
         }
+
+        public void Rename(string newName)
+        {
+            Name = newName;
+        }
+        public void UpdatePassport(string passportId)
+        {
+            PassportId = passportId;
+        }
     }
 }

@@ -27,5 +27,25 @@ namespace Library.Domain.Entities
             // TODO: maybe some checks
             return new Book(isbn, title, author, description, 1);
         }
+
+        public void ChangeDescription(string newDescription)
+        {
+            Description = newDescription;
+        }
+        public void ChangeTitle(string newTitle) { Title = newTitle; }
+        public void ChangeAuthor(string newAuthor) { Author = newAuthor; }
+        public void Add()
+        {
+            Amount += 1;
+        }
+        public void Get()
+        {
+            if (Amount <= 0)
+            {
+                throw new InvalidOperationException("Cannot get book");
+            }
+
+            Amount -= 1;
+        }
     }
 }
