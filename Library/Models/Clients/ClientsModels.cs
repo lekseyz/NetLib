@@ -51,10 +51,15 @@ namespace Library.Models.Clients
     public class ClientDetailsViewModel
     {
         public Guid Id { get; set; }
+        [Required]
+        [StringLength(100)]
         public string Name { get; set; }
+        [Required]
+        [StringLength(50)]
         public string PassportId { get; set; }
         public DateTime RegistrationDate { get; set; }
-
         public IEnumerable<ClientRegistryNoteModel> Notes { get; set; }
+
+        public bool IsEditMode { get; set; }
     }
 }

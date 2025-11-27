@@ -3,7 +3,38 @@
     ViewBag.Title = "Клиент";
 }
 
-<h1>Клиент:</h1>
+<div class="page-header">
+    <h1>Клиент</h1>
+    <button id="edit-client-btn" class="change-button" title="Изменить данные клиента">
+        Изменить
+    </button>
+</div>
+
+<div id="edit-client-form" class="panel" style="@(Model.IsEditMode ? "" : "display:none;")">
+    <h2>Редактирование клиента</h2>
+
+    @Html.ValidationSummary(true)
+
+    @using (Html.BeginForm("Edit", "Client", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+
+        <div class="form-row">
+            @Html.LabelFor(m => m.Name)
+            @Html.TextBoxFor(m => m.Name)
+            @Html.ValidationMessageFor(m => m.Name)
+        </div>
+
+        <div class="form-row">
+            @Html.LabelFor(m => m.PassportId)
+            @Html.TextBoxFor(m => m.PassportId)
+            @Html.ValidationMessageFor(m => m.PassportId)
+        </div>
+
+        <button type="submit" class="primary-btn">Сохранить</button>
+    }
+</div>
 
 <div class="panel">
     <p><strong>Имя: </strong>@Model.Name</p>
@@ -56,4 +87,20 @@
 <p>
     @Html.ActionLink("Назад к списку", "Index", "Client")
 </p>
+
+@section Scripts {
+    <script>(function () {
+    var btn = document.getElementById('edit-client-btn');
+    var form = document.getElementById('edit-client-form');
+
+    btn.addEventListener('click', function () {
+
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+     });
+     })();</script>
+}
 

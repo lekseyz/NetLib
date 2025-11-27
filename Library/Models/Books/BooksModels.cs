@@ -75,12 +75,20 @@ namespace Library.Models.Books
 
     public class BookDetailsViewModel
     {
+        [Required]
         public string Isbn { get; set; }
+        [Required]
+        [Display(Name = "Название")]
         public string Title { get; set; }
+        [Required]
+        [Display(Name = "Автор")]
         public string Author { get; set; }
+        [Display(Name = "Описание")]
         public string Description { get; set; }
+        [Display(Name = "Количество")]
         public int Amount { get; set; }
-
         public IEnumerable<BookBorrowNoteModel> History { get; set; }
+
+        public bool IsEditMode { get; set; }
     }
 }

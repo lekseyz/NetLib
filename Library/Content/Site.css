@@ -55,6 +55,26 @@ body {
     color: #fff;
 }
 
+.remove-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    background: #c0392b;
+    color: #fff;
+}
+
+.change-button {
+    border-radius: 10%;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    background: #1e43bd;
+    color: #fff;
+}
+
 .add-button:hover {
     background: #2ecc71;
 }

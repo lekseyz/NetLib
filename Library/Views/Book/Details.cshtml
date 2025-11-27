@@ -4,7 +4,51 @@
     ViewBag.Title = "Книга";
 }
 
-<h1>Книга</h1>
+<div class="page-header">
+    <h1>Книга</h1>
+
+    @using (Html.BeginForm("IncreaseAmount", "Book", FormMethod.Post, new { @class = "inline-form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("isbn", Model.Isbn)
+        <button type="submit" class="add-button" title="Добавить книгу">+</button>
+    }
+
+    @using (Html.BeginForm("DecreaseAmount", "Book", FormMethod.Post, new { @class = "inline-form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("isbn", Model.Isbn)
+        <button type="submit" class="remove-button" title="Удалить книгу">-</button>
+    }
+
+    <button id="edit-book-btn" class="change-button" title="Изменить описание">
+        Изменить
+    </button>
+</div>
+
+<div id="edit-book-form" class="panel" style="@(Model.IsEditMode ? "" : "display:none;")">
+    <h2>Редактирование книги</h2>
+
+    @Html.ValidationSummary(true)
+
+    @using (Html.BeginForm("Edit", "Book", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Isbn)
+
+        <p><strong>Название (только для чтения): </strong>@Model.Title</p>
+        <p><strong>Автор (только для чтения): </strong>@Model.Author</p>
+
+        <div class="form-row">
+            @Html.LabelFor(m => m.Description)
+            @Html.TextAreaFor(m => m.Description, 3, 40, null)
+            @Html.ValidationMessageFor(m => m.Description)
+        </div>
+
+        <button type="submit" class="primary-btn">Сохранить</button>
+    }
+</div>
+
 
 <div class="panel">
     <p><strong>Название: </strong>@Model.Title</p>
@@ -39,12 +83,12 @@
                     <tr>
                         <td>
                             @Html.ActionLink(
-                                     note.ClientName,
-                                     "Details",
-                                     "Client",
-                                     new { id = note.ClientId },
-                                     null
-                                 )
+                                                    note.ClientName,
+                                                    "Details",
+                                                    "Client",
+                                                    new { id = note.ClientId },
+                                                    null
+                                                )
                         </td>
                         <td>@note.ClientPassportId</td>
                         <td>@note.IssueDate.ToString("dd.MM.yyyy")</td>
@@ -70,3 +114,20 @@
 <p>
     @Html.ActionLink("Назад к списку книг", "Index", "Book")
 </p>
+
+@section Scripts {
+    <script>
+        (function () {
+            var btn = document.getElementById('edit-book-btn');
+            var form = document.getElementById('edit-book-form');
+
+            btn.addEventListener('click', function () {
+                if (form.style.display === 'none' || form.style.display === '') {
+                    form.style.display = 'block';
+                } else {
+                    form.style.display = 'none';
+                }
+            });
+        })();
+    </script>
+}

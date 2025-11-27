@@ -1,4 +1,5 @@
-﻿using Library.Domain.Services;
+﻿using Library.Domain.Dtos;
+using Library.Domain.Services;
 using Library.Models.Books;
 using Library.Models.Clients;
 using System;
@@ -95,10 +96,52 @@ namespace Library.Controllers
                 Name = client.Name,
                 PassportId = client.PassportId,
                 RegistrationDate = client.RegistrationDate,
-                Notes = notes
+                Notes = notes,
+                IsEditMode = false
             };
 
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(ClientDetailsViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var client = _clientService.Get(model.Id);
+                if (client == null)
+                    return HttpNotFound();
+
+                var issues = _libraryService.GetIssue(model.Id);
+                var notes = issues.Select(i => new ClientRegistryNoteModel
+                {
+                    Book = new BookItemModel
+                    {
+                        Isbn = i.Book.Isbn,
+                        Title = i.Book.Title
+                    },
+                    IssueDate = i.IssueDate,
+                    DueDate = i.DueDate,
+                    ReturnDate = i.ReturnDate
+                }).ToList();
+
+                model.RegistrationDate = client.RegistrationDate;
+                model.Notes = notes;
+                model.IsEditMode = true;
+
+                return View("Details", model);
+            }
+
+            var changeDto = new ChangeClientDto
+            {
+                Name = model.Name,
+                PassportId = model.PassportId
+            };
+
+            _clientService.Change(model.Id, changeDto);
+
+            return RedirectToAction("Details", new { id = model.Id });
         }
     }
 }

@@ -16,7 +16,6 @@ namespace Library.Controllers
             _libraryService = libraryService;
         }
 
-        // GET: /Book
         [HttpGet]
         public ActionResult Index()
         {
@@ -40,14 +39,12 @@ namespace Library.Controllers
             return View(model);
         }
 
-        // POST: /Book  (создание книги на той же странице)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Index(BookIndexViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                // при ошибках — заново подтянуть список и открыть форму
                 var books = _libraryService.GetBooks()
                     .Select(b => new BookItemViewModel
                     {
@@ -64,7 +61,6 @@ namespace Library.Controllers
                 return View(model);
             }
 
-            // создание новой книги
             _libraryService.Add(
                 model.NewBook.Isbn,
                 model.NewBook.Author,
@@ -75,7 +71,6 @@ namespace Library.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: /Book/Details?isbn=...
         [HttpGet]
         public ActionResult Details(string isbn)
         {
@@ -86,10 +81,8 @@ namespace Library.Controllers
             if (book == null)
                 return HttpNotFound();
 
-            // История по книге
             var issues = _libraryService.GetIssue(isbn);
 
-            // Полагаюсь на то, что IssueDto содержит Client и даты (как в твоём репозитории)
             var history = issues.Select(i => new BookBorrowNoteModel
             {
                 ClientId = i.Client.Id,
@@ -107,11 +100,69 @@ namespace Library.Controllers
                 Author = book.Author,
                 Description = book.Description,
                 Amount = book.Amount,
-                History = history
+                History = history,
+                IsEditMode = false
             };
 
             return View(model);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(BookDetailsViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var book = _libraryService.Get(model.Isbn);
+                if (book == null)
+                    return HttpNotFound();
+
+                var issues = _libraryService.GetIssue(model.Isbn);
+                var history = issues.Select(i => new BookBorrowNoteModel
+                {
+                    ClientId = i.Client.Id,
+                    ClientName = i.Client.Name,
+                    ClientPassportId = i.Client.PassportId,
+                    IssueDate = i.IssueDate,
+                    DueDate = i.DueDate,
+                    ReturnDate = i.ReturnDate
+                }).ToList();
+
+                model.Title = book.Title;
+                model.Author = book.Author;
+                model.Amount = book.Amount;
+                model.History = history;
+                model.IsEditMode = true;
+
+                return View("Details", model);
+            }
+
+            _libraryService.Change(model.Isbn, model.Description);
+
+            return RedirectToAction("Details", new { isbn = model.Isbn });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult IncreaseAmount(string isbn)
+        {
+            _libraryService.Add(isbn);
+
+            return RedirectToAction("Details", new { isbn });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DecreaseAmount(string isbn)
+        {
+            if (_libraryService.Get(isbn).Amount <= 0)
+                return RedirectToAction("Details", new { isbn });
+
+            _libraryService.Delete(isbn);
+
+            return RedirectToAction("Details", new { isbn });
+        }
+
     }
 }
 
