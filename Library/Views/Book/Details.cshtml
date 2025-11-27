@@ -7,6 +7,10 @@
 <div class="page-header">
     <h1>Книга</h1>
 
+    <button id="edit-book-btn" class="change-button" title="Изменить описание">
+        Изменить
+    </button>
+    <div class="button-container">
     @using (Html.BeginForm("IncreaseAmount", "Book", FormMethod.Post, new { @class = "inline-form" }))
     {
         @Html.AntiForgeryToken()
@@ -20,13 +24,10 @@
         @Html.Hidden("isbn", Model.Isbn)
         <button type="submit" class="remove-button" title="Удалить книгу">-</button>
     }
-
-    <button id="edit-book-btn" class="change-button" title="Изменить описание">
-        Изменить
-    </button>
+    </div>
 </div>
 
-<div id="edit-book-form" class="panel" style="@(Model.IsEditMode ? "" : "display:none;")">
+<div id="edit-book-form" class="panel" style="@(Model.IsEditMode ? "display:block;" : "display:none;")">
     <h2>Редактирование книги</h2>
 
     @Html.ValidationSummary(true)
@@ -115,19 +116,4 @@
     @Html.ActionLink("Назад к списку книг", "Index", "Book")
 </p>
 
-@section Scripts {
-    <script>
-        (function () {
-            var btn = document.getElementById('edit-book-btn');
-            var form = document.getElementById('edit-book-form');
-
-            btn.addEventListener('click', function () {
-                if (form.style.display === 'none' || form.style.display === '') {
-                    form.style.display = 'block';
-                } else {
-                    form.style.display = 'none';
-                }
-            });
-        })();
-    </script>
-}
+@section Scripts { <script  src="~/Scripts/App/BookDetails.js"></script> }

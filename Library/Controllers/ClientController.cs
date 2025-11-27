@@ -6,7 +6,6 @@ using Library.Models.Clients;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Library.Controllers
@@ -21,35 +20,6 @@ namespace Library.Controllers
         {
             _clientService = clientService;
             _libraryService = libraryService;
-        }
-
-        private ClientDetailsViewModel BuildClientDetailsModel(Client client)
-        {
-            var history = _libraryService.GetIssue(client.Id);
-
-            var notes = history.Select(h => new ClientRegistryNoteModel
-            {
-                Book = new BookItemModel
-                {
-                    Isbn = h.Book.Isbn,
-                    Title = h.Book.Title
-                },
-                IssueDate = h.IssueDate,
-                DueDate = h.DueDate,
-                ReturnDate = h.ReturnDate
-            }).ToList();
-
-            var model = new ClientDetailsViewModel
-            {
-                Id = client.Id,
-                Name = client.Name,
-                PassportId = client.PassportId,
-                RegistrationDate = client.RegistrationDate,
-                Notes = notes,
-                IsEditMode = false
-            };
-
-            return model;
         }
 
         [HttpGet]
@@ -135,9 +105,9 @@ namespace Library.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Borrow(Guid clientId, string isbn)
+        public ActionResult Borrow(Guid clientId, string isbnBorrow)
         {
-            if (clientId == Guid.Empty || string.IsNullOrWhiteSpace(isbn))
+            if (string.IsNullOrWhiteSpace(isbnBorrow))
             {
                 ModelState.AddModelError("", "Нужно указать ISBN.");
             }
@@ -145,8 +115,6 @@ namespace Library.Controllers
             if (!ModelState.IsValid)
             {
                 var client = _clientService.Get(clientId);
-                if (client == null)
-                    return HttpNotFound();
 
                 var model = BuildClientDetailsModel(client);
 
@@ -154,13 +122,14 @@ namespace Library.Controllers
                 return View("Details", model);
             }
 
-            var book = _libraryService.Get(isbn);
-            if (book == null)
+            try
             {
-                ModelState.AddModelError("404", "Книга с таким ISBN не найдена.");
+                var book = _libraryService.Get(isbnBorrow);
+            }
+            catch(KeyNotFoundException)
+            {
+                ModelState.AddModelError("", "Книга с таким ISBN не найдена.");
                 var client = _clientService.Get(clientId);
-                if (client == null)
-                    return HttpNotFound();
 
                 var model = BuildClientDetailsModel(client);
 
@@ -168,7 +137,20 @@ namespace Library.Controllers
                 return View("Details", model);
             }
 
-            _libraryService.BorrowBook(isbn, clientId);
+            try
+            {
+                _libraryService.BorrowBook(isbnBorrow, clientId);
+            }
+            catch (InvalidOperationException)
+            {
+                ModelState.AddModelError("", "Нет больше доступных книг.");
+                var client = _clientService.Get(clientId);
+
+                var model = BuildClientDetailsModel(client);
+
+                model.IsBorrowFormOpen = true;
+                return View("Details", model);
+            }
 
             return RedirectToAction("Details", new { id = clientId });
         }
@@ -185,6 +167,37 @@ namespace Library.Controllers
             _libraryService.ReturnBook(isbn, clientId);
 
             return RedirectToAction("Details", new { id = clientId });
+        }
+
+        // ----------------- хэлперы -----------------
+
+        private ClientDetailsViewModel BuildClientDetailsModel(Client client)
+        {
+            var history = _libraryService.GetIssue(client.Id);
+
+            var notes = history.Select(h => new ClientRegistryNoteModel
+            {
+                Book = new BookItemModel
+                {
+                    Isbn = h.Book.Isbn,
+                    Title = h.Book.Title
+                },
+                IssueDate = h.IssueDate,
+                DueDate = h.DueDate,
+                ReturnDate = h.ReturnDate
+            }).ToList();
+
+            var model = new ClientDetailsViewModel
+            {
+                Id = client.Id,
+                Name = client.Name,
+                PassportId = client.PassportId,
+                RegistrationDate = client.RegistrationDate,
+                Notes = notes,
+                IsEditMode = false
+            };
+
+            return model;
         }
     }
 }

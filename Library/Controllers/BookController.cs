@@ -1,9 +1,8 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Library.Domain.Services;
 using Library.Models.Books;
-
 
 namespace Library.Controllers
 {
@@ -19,20 +18,10 @@ namespace Library.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            var books = _libraryService.GetBooks()
-                .Select(b => new BookItemViewModel
-                {
-                    Isbn = b.Isbn,
-                    Title = b.Title,
-                    Author = b.Author,
-                    Amount = b.Amount
-                })
-                .ToList();
-
             var model = new BookIndexViewModel
             {
                 NewBook = new BookCreateViewModel(),
-                Books = books,
+                Books = GetBookItems(),
                 IsFormOpen = false
             };
 
@@ -45,17 +34,7 @@ namespace Library.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var books = _libraryService.GetBooks()
-                    .Select(b => new BookItemViewModel
-                    {
-                        Isbn = b.Isbn,
-                        Title = b.Title,
-                        Author = b.Author,
-                        Amount = b.Amount
-                    })
-                    .ToList();
-
-                model.Books = books;
+                model.Books = GetBookItems();
                 model.IsFormOpen = true;
 
                 return View(model);
@@ -81,18 +60,6 @@ namespace Library.Controllers
             if (book == null)
                 return HttpNotFound();
 
-            var issues = _libraryService.GetIssue(isbn);
-
-            var history = issues.Select(i => new BookBorrowNoteModel
-            {
-                ClientId = i.Client.Id,
-                ClientName = i.Client.Name,
-                ClientPassportId = i.Client.PassportId,
-                IssueDate = i.IssueDate,
-                DueDate = i.DueDate,
-                ReturnDate = i.ReturnDate
-            }).ToList();
-
             var model = new BookDetailsViewModel
             {
                 Isbn = book.Isbn,
@@ -100,7 +67,7 @@ namespace Library.Controllers
                 Author = book.Author,
                 Description = book.Description,
                 Amount = book.Amount,
-                History = history,
+                History = GetBookHistory(isbn),
                 IsEditMode = false
             };
 
@@ -117,21 +84,10 @@ namespace Library.Controllers
                 if (book == null)
                     return HttpNotFound();
 
-                var issues = _libraryService.GetIssue(model.Isbn);
-                var history = issues.Select(i => new BookBorrowNoteModel
-                {
-                    ClientId = i.Client.Id,
-                    ClientName = i.Client.Name,
-                    ClientPassportId = i.Client.PassportId,
-                    IssueDate = i.IssueDate,
-                    DueDate = i.DueDate,
-                    ReturnDate = i.ReturnDate
-                }).ToList();
-
                 model.Title = book.Title;
                 model.Author = book.Author;
                 model.Amount = book.Amount;
-                model.History = history;
+                model.History = GetBookHistory(model.Isbn);
                 model.IsEditMode = true;
 
                 return View("Details", model);
@@ -163,6 +119,36 @@ namespace Library.Controllers
             return RedirectToAction("Details", new { isbn });
         }
 
+        // ----------------- хэлперы -----------------
+
+        private List<BookItemViewModel> GetBookItems()
+        {
+            return _libraryService.GetBooks()
+                .Select(b => new BookItemViewModel
+                {
+                    Isbn = b.Isbn,
+                    Title = b.Title,
+                    Author = b.Author,
+                    Amount = b.Amount
+                })
+                .ToList();
+        }
+
+        private List<BookBorrowNoteModel> GetBookHistory(string isbn)
+        {
+            var issues = _libraryService.GetIssue(isbn);
+
+            return issues
+                .Select(i => new BookBorrowNoteModel
+                {
+                    ClientId = i.Client.Id,
+                    ClientName = i.Client.Name,
+                    ClientPassportId = i.Client.PassportId,
+                    IssueDate = i.IssueDate,
+                    DueDate = i.DueDate,
+                    ReturnDate = i.ReturnDate
+                })
+                .ToList();
+        }
     }
 }
-

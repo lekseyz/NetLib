@@ -128,6 +128,7 @@ WHERE Isbn = @Isbn;";
 
         private Book ToDomain(BookEntity entity)
         {
+            if (entity == null) return null;
             return new Book(entity.Isbn, entity.Title, entity.Author, entity.Description, entity.Amount);
         }
     }

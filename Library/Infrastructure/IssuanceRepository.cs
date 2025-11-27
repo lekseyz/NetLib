@@ -95,11 +95,11 @@ VALUES (@Id, @UserId, @Isbn, @IssueDate, @DueDate, NULL);";
             var sql0 = @"
 SELECT Id
 FROM Issues
-WHERE UserId = @UserId AND Isbn = @Isbn;";
+WHERE UserId = @UserId AND Isbn = @Isbn AND ReturnDate IS NULL;";
             var sql = @"
 UPDATE Issues
 SET ReturnDate = @ReturnDate
-WHERE Id = @Id AND ReturnDate IS NULL;";
+WHERE Id = @Id;";
 
             using (var connection = DataBase.CreateConnection())
             {
