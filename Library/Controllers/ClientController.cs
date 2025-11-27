@@ -1,4 +1,5 @@
 ﻿using Library.Domain.Dtos;
+using Library.Domain.Entities;
 using Library.Domain.Services;
 using Library.Models.Books;
 using Library.Models.Clients;
@@ -20,6 +21,35 @@ namespace Library.Controllers
         {
             _clientService = clientService;
             _libraryService = libraryService;
+        }
+
+        private ClientDetailsViewModel BuildClientDetailsModel(Client client)
+        {
+            var history = _libraryService.GetIssue(client.Id);
+
+            var notes = history.Select(h => new ClientRegistryNoteModel
+            {
+                Book = new BookItemModel
+                {
+                    Isbn = h.Book.Isbn,
+                    Title = h.Book.Title
+                },
+                IssueDate = h.IssueDate,
+                DueDate = h.DueDate,
+                ReturnDate = h.ReturnDate
+            }).ToList();
+
+            var model = new ClientDetailsViewModel
+            {
+                Id = client.Id,
+                Name = client.Name,
+                PassportId = client.PassportId,
+                RegistrationDate = client.RegistrationDate,
+                Notes = notes,
+                IsEditMode = false
+            };
+
+            return model;
         }
 
         [HttpGet]
@@ -76,31 +106,7 @@ namespace Library.Controllers
             if (client == null)
                 return HttpNotFound();
 
-            var history = _libraryService.GetIssue(id);
-
-            var notes = history.Select(h => new ClientRegistryNoteModel
-            {
-                Book = new BookItemModel
-                {
-                    Isbn = h.Book.Isbn,
-                    Title = h.Book.Title
-                },
-                IssueDate = h.IssueDate,
-                DueDate = h.DueDate,
-                ReturnDate = h.ReturnDate
-            }).ToList();
-
-            var model = new ClientDetailsViewModel
-            {
-                Id = client.Id,
-                Name = client.Name,
-                PassportId = client.PassportId,
-                RegistrationDate = client.RegistrationDate,
-                Notes = notes,
-                IsEditMode = false
-            };
-
-            return View(model);
+            return View(BuildClientDetailsModel(client));
         }
 
         [HttpPost]
@@ -113,24 +119,7 @@ namespace Library.Controllers
                 if (client == null)
                     return HttpNotFound();
 
-                var issues = _libraryService.GetIssue(model.Id);
-                var notes = issues.Select(i => new ClientRegistryNoteModel
-                {
-                    Book = new BookItemModel
-                    {
-                        Isbn = i.Book.Isbn,
-                        Title = i.Book.Title
-                    },
-                    IssueDate = i.IssueDate,
-                    DueDate = i.DueDate,
-                    ReturnDate = i.ReturnDate
-                }).ToList();
-
-                model.RegistrationDate = client.RegistrationDate;
-                model.Notes = notes;
-                model.IsEditMode = true;
-
-                return View("Details", model);
+                return View("Details", BuildClientDetailsModel(client));
             }
 
             var changeDto = new ChangeClientDto
@@ -142,6 +131,60 @@ namespace Library.Controllers
             _clientService.Change(model.Id, changeDto);
 
             return RedirectToAction("Details", new { id = model.Id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Borrow(Guid clientId, string isbn)
+        {
+            if (clientId == Guid.Empty || string.IsNullOrWhiteSpace(isbn))
+            {
+                ModelState.AddModelError("", "Нужно указать ISBN.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var client = _clientService.Get(clientId);
+                if (client == null)
+                    return HttpNotFound();
+
+                var model = BuildClientDetailsModel(client);
+
+                model.IsBorrowFormOpen = true;
+                return View("Details", model);
+            }
+
+            var book = _libraryService.Get(isbn);
+            if (book == null)
+            {
+                ModelState.AddModelError("404", "Книга с таким ISBN не найдена.");
+                var client = _clientService.Get(clientId);
+                if (client == null)
+                    return HttpNotFound();
+
+                var model = BuildClientDetailsModel(client);
+
+                model.IsBorrowFormOpen = true;
+                return View("Details", model);
+            }
+
+            _libraryService.BorrowBook(isbn, clientId);
+
+            return RedirectToAction("Details", new { id = clientId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Return(Guid clientId, string isbn)
+        {
+            if (clientId == Guid.Empty || string.IsNullOrWhiteSpace(isbn))
+            {
+                return RedirectToAction("Details", new { id = clientId });
+            }
+
+            _libraryService.ReturnBook(isbn, clientId);
+
+            return RedirectToAction("Details", new { id = clientId });
         }
     }
 }

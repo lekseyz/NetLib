@@ -61,5 +61,6 @@ namespace Library.Models.Clients
         public IEnumerable<ClientRegistryNoteModel> Notes { get; set; }
 
         public bool IsEditMode { get; set; }
+        public bool IsBorrowFormOpen { get; set; }
     }
 }

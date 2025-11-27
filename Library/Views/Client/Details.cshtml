@@ -8,6 +8,9 @@
     <button id="edit-client-btn" class="change-button" title="Изменить данные клиента">
         Изменить
     </button>
+    <button id="borrow-btn" class="primary-btn" title="Выдать книгу клиенту">
+        Взять книгу
+    </button>
 </div>
 
 <div id="edit-client-form" class="panel" style="@(Model.IsEditMode ? "" : "display:none;")">
@@ -33,6 +36,25 @@
         </div>
 
         <button type="submit" class="primary-btn">Сохранить</button>
+    }
+</div>
+
+<div id="borrow-form" class="panel" style="@(Model.IsBorrowFormOpen ? "" : "display:none;")">
+    <h2>Выдача книги</h2>
+
+    @Html.ValidationSummary(true)
+
+    @using (Html.BeginForm("Borrow", "Client", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("clientId", Model.Id)
+
+        <div class="form-row">
+            <label for="borrow-isbn">ISBN</label>
+            <input type="text" id="borrow-isbn" name="isbn" />
+        </div>
+
+        <button type="submit" class="primary-btn">Выдать</button>
     }
 </div>
 
@@ -73,6 +95,19 @@
                                 : "Ещё не возвращена"
                          )
                         </td>
+                        <td>
+                            @if (!note.ReturnDate.HasValue)
+                            {
+                                using (Html.BeginForm("Return", "Client", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.Hidden("clientId", Model.Id)
+                                    @Html.Hidden("isbn", note.Book.Isbn)
+
+                                    <button type="submit" class="primary-btn small-btn">Вернуть</button>
+                                }
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -89,17 +124,33 @@
 </p>
 
 @section Scripts {
-    <script>(function () {
-    var btn = document.getElementById('edit-client-btn');
-    var form = document.getElementById('edit-client-form');
 
-    btn.addEventListener('click', function () {
+    <script>
+        (function () {
+            var borrowBtn = document.getElementById('borrow-btn');
+            var borrowForm = document.getElementById('borrow-form');
 
-        if (form.style.display === 'none' || form.style.display === '') {
-            form.style.display = 'block';
-        } else {
-            form.style.display = 'none';
-        }
+
+            borrowBtn.addEventListener('click', function () {
+                if (borrowForm.style.display === 'none' || borrowForm.style.display === '') {
+                    borrowForm.style.display = 'block';
+                } else {
+                    borrowForm.style.display = 'none';
+                }
+            });
+        })();
+
+        (function () {
+            var btn = document.getElementById('edit-client-btn');
+            var form = document.getElementById('edit-client-form');
+
+            btn.addEventListener('click', function () {
+
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
      });
      })();</script>
 }
