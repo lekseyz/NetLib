@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Library.Infrastructure.Abstraction
 {
-    internal interface IIssuanceRepository
+    public interface IIssuanceRepository
     {
         void Issue(string isbn, Guid userId);
         void Return(string isbn, Guid userId);

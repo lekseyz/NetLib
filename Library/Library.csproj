@@ -183,9 +183,12 @@
     <Compile Include="Domain\Repositories\IBookRepository.cs" />
     <Compile Include="Domain\Repositories\IClientRepository.cs" />
     <Compile Include="Domain\Repositories\IIssuanceRepository.cs" />
+    <Compile Include="Infrastructure\BookRepository.cs" />
+    <Compile Include="Infrastructure\ClientRepository.cs" />
     <Compile Include="Infrastructure\Entities\BookEntity.cs" />
     <Compile Include="Infrastructure\Entities\ClientEntity.cs" />
     <Compile Include="Infrastructure\Entities\IssuesEntity.cs" />
+    <Compile Include="Infrastructure\IssuanceRepository.cs" />
     <Compile Include="Infrastructure\Misc\DataBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Domain\Services\IClientService.cs" />

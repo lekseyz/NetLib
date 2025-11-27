@@ -4,16 +4,22 @@ using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Web;
+using Microsoft.Ajax.Utilities;
 
 namespace Library.Infrastructure.Misc
 {
     public class DataBase
     {
+        public static string BaseConnection = null;
         public static IDbConnection CreateConnection()
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["LibraryDb"].ConnectionString;
+            string connectionString;
+            if (BaseConnection.IsNullOrWhiteSpace())
+                connectionString = ConfigurationManager.ConnectionStrings["LibraryDb"].ConnectionString;
+            else 
+                connectionString = BaseConnection;
 
-            var connection = new SQLiteConnection(connectionString);
+                var connection = new SQLiteConnection(connectionString);
             connection.Open();
             connection.Execute("PRAGMA foreign_keys = ON;");
             return connection;

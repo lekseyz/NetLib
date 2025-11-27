@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Library.Domain.Repositories
 {
-    internal interface IBookRepository
+    public interface IBookRepository
     {
         void Create(Book book);
         void Update(Book book);

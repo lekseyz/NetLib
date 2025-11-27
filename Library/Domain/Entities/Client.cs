@@ -13,7 +13,7 @@ namespace Library.Domain.Entities
         public string PassportId { get; private set; }
         public DateTime RegistrationDate { get; private set; }
 
-        private Client(Guid id, string name, string passportId, DateTime registrationDate)
+        public Client(Guid id, string name, string passportId, DateTime registrationDate)
         {
             Id = id;
             Name = name;

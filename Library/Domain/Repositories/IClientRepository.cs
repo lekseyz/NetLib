@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Library.Infrastructure.Abstraction
 {
-    internal interface IClientRepository
+    public interface IClientRepository
     {
         void Add(Client client);
         void Update(Client client);

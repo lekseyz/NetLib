@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="Library/Library.csproj" Id="356bc9c2-adb2-4121-9f70-0fe8959b7ddf" />
+  <Project Path="Test/Test.csproj" Id="9e4d84cf-9975-402b-8df8-a22640d80de7" />
 </Solution>

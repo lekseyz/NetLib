@@ -13,7 +13,7 @@ namespace Library.Domain.Entities
         public string Description { get; private set; }
         public int Amount { get; private set; }
 
-        private Book(string isbn, string title, string author, string description, int amount)
+        public Book(string isbn, string title, string author, string description, int amount)
         {
             Isbn = isbn;
             Title = title;
