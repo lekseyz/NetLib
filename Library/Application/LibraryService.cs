@@ -1,4 +1,4 @@
-﻿using Library.Application.Abstraction;
+﻿using Library.Domain.Services;
 using Library.Domain.Dtos;
 using Library.Domain.Entities;
 using Library.Domain.Repositories;
@@ -22,6 +22,16 @@ namespace Library.Application
             _bookRepository = bookRepository;
             _clientRepository = clientRepository;
             _issuanceRepository = issuanceRepository;
+        }
+
+        public IEnumerable<IssueDto> GetIssue(Guid userId)
+        {
+            return _issuanceRepository.GetAllIssues(userId);
+        }
+
+        public IEnumerable<IssueDto> GetIssue(string isbn)
+        {
+            return _issuanceRepository.GetAllIssues(isbn);
         }
 
         Book ILibraryService.Add(string isbn, string author, string title, string description)

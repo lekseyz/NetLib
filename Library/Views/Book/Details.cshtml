@@ -1,0 +1,72 @@
+﻿@model Library.Models.Books.BookDetailsViewModel
+
+@{
+    ViewBag.Title = "Книга";
+}
+
+<h1>Книга</h1>
+
+<div class="panel">
+    <p><strong>Название: </strong>@Model.Title</p>
+    <p><strong>Автор: </strong>@Model.Author</p>
+    <p><strong>ISBN: </strong>@Model.Isbn</p>
+    <p><strong>Количество экземпляров: </strong>@Model.Amount</p>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Description))
+    {
+        <p><strong>Описание: </strong>@Model.Description</p>
+    }
+</div>
+
+<div class="panel">
+    <h2>Кто брал эту книгу</h2>
+
+    @if (Model.History != null && Model.History.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Клиент</th>
+                    <th>Паспорт</th>
+                    <th>Дата выдачи</th>
+                    <th>Срок возврата</th>
+                    <th>Дата возврата</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var note in Model.History)
+                {
+                    <tr>
+                        <td>
+                            @Html.ActionLink(
+                                     note.ClientName,
+                                     "Details",
+                                     "Client",
+                                     new { id = note.ClientId },
+                                     null
+                                 )
+                        </td>
+                        <td>@note.ClientPassportId</td>
+                        <td>@note.IssueDate.ToString("dd.MM.yyyy")</td>
+                        <td>@note.DueDate.ToString("dd.MM.yyyy")</td>
+                        <td>
+                            @(
+                            note.ReturnDate.HasValue
+                                ? note.ReturnDate.Value.ToString("dd.MM.yyyy")
+                                : "Ещё не возвращена"
+                         )
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Эту книгу ещё никто не брал.</p>
+    }
+</div>
+
+<p>
+    @Html.ActionLink("Назад к списку книг", "Index", "Book")
+</p>

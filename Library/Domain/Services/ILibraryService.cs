@@ -6,11 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Application.Abstraction
+namespace Library.Domain.Services
 {
-    internal interface ILibraryService
+    public interface ILibraryService
     {
         IEnumerable<Book> GetBooks();
+        IEnumerable<IssueDto> GetIssue(Guid userId);
+
+        IEnumerable<IssueDto> GetIssue(string isbn);
         Book Add(string isbn, string author, string title, string description);
         Book Add(string isbn);
         void Delete(string isbn);

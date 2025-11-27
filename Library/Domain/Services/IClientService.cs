@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Library.Domain.Services
 {
-    internal interface IClientService
+    public interface IClientService
     {
         Client Register(string name, string passwordId);
         Client Get(Guid id);

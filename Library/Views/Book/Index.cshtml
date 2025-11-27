@@ -1,0 +1,104 @@
+﻿@model Library.Models.Books.BookIndexViewModel
+
+@{
+    ViewBag.Title = "Книги";
+}
+
+<div class="page-header">
+    <h1>Книги</h1>
+    <button id="add-book-btn" class="add-button" title="Добавить книгу">+</button>
+</div>
+
+<div id="new-book-form" class="panel" style="@(Model.IsFormOpen ? "" : "display:none;")">
+    <h2>Новая книга</h2>
+
+    @Html.ValidationSummary(true)
+
+    @using (Html.BeginForm("Index", "Book", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-row">
+            @Html.LabelFor(m => m.NewBook.Isbn)
+            @Html.TextBoxFor(m => m.NewBook.Isbn)
+            @Html.ValidationMessageFor(m => m.NewBook.Isbn)
+        </div>
+
+        <div class="form-row">
+            @Html.LabelFor(m => m.NewBook.Title)
+            @Html.TextBoxFor(m => m.NewBook.Title)
+            @Html.ValidationMessageFor(m => m.NewBook.Title)
+        </div>
+
+        <div class="form-row">
+            @Html.LabelFor(m => m.NewBook.Author)
+            @Html.TextBoxFor(m => m.NewBook.Author)
+            @Html.ValidationMessageFor(m => m.NewBook.Author)
+        </div>
+
+        <div class="form-row">
+            @Html.LabelFor(m => m.NewBook.Description)
+            @Html.TextAreaFor(m => m.NewBook.Description, 3, 40, null)
+            @Html.ValidationMessageFor(m => m.NewBook.Description)
+        </div>
+
+        <button type="submit" class="primary-btn">Сохранить</button>
+    }
+</div>
+
+<div class="panel">
+    <h2>Список книг</h2>
+
+    @if (Model.Books != null && Model.Books.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(m => m.Books.First().Title)</th>
+                    <th>@Html.DisplayNameFor(m => m.Books.First().Author)</th>
+                    <th>@Html.DisplayNameFor(m => m.Books.First().Isbn)</th>
+                    <th>@Html.DisplayNameFor(m => m.Books.First().Amount)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var book in Model.Books)
+                {
+                    <tr>
+                        <td>
+                            @Html.ActionLink(
+                                book.Title,
+                                "Details",
+                                "Book",
+                                new { isbn = book.Isbn },
+                                null)
+                        </td>
+                        <td>@book.Author</td>
+                        <td>@book.Isbn</td>
+                        <td>@book.Amount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Пока нет ни одной книги.</p>
+    }
+</div>
+
+@section Scripts {
+    <script>(function () {
+        var btn = document.getElementById('add-book-btn');
+        var form = document.getElementById('new-book-form');
+    
+        btn.addEventListener('click', function () {
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        });
+    })();</script>
+}
+

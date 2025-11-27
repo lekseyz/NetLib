@@ -1,20 +1,129 @@
-﻿/* Set padding to keep content from hitting the edges */
-.body-content {
-    margin-top: 15px;
-    padding-left: 15px;
-    padding-right: 15px;
+﻿
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f5f5;
 }
 
-/* Override the default bootstrap behavior where horizontal description lists 
-   will truncate terms that are too long to fit in the left column 
-*/
-.dl-horizontal dt {
-    white-space: normal;
+.top-nav {
+    background: #2c3e50;
+    color: #ecf0f1;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
 }
 
-/* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
-    max-width: 280px;
+.top-nav .logo {
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.top-nav a {
+    color: #ecf0f1;
+    text-decoration: none;
+    margin-right: 15px;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.top-nav a.active,
+.top-nav a:hover {
+    background: #34495e;
+}
+
+.content {
+    max-width: 960px;
+    margin: 20px auto;
+    padding: 0 15px 40px;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.add-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    background: #27ae60;
+    color: #fff;
+}
+
+.add-button:hover {
+    background: #2ecc71;
+}
+
+.panel {
+    background: #ffffff;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.form-row {
+    margin-bottom: 10px;
+}
+
+.form-row label {
+    display: block;
+    margin-bottom: 3px;
+}
+
+.form-row input[type="text"] {
+    width: 100%;
+    padding: 6px 8px;
+    box-sizing: border-box;
+}
+
+.primary-btn {
+    padding: 6px 14px;
+    border: none;
+    background: #2980b9;
+    color: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.primary-btn:hover {
+    background: #3498db;
+}
+
+table.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+table.table th, table.table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+}
+
+table.table th {
+    text-align: left;
+    background: #fafafa;
+}
+
+table.table tr:last-child td {
+    border-bottom: none;
+}
+
+.validation-summary-errors {
+    color: #c0392b;
+    margin-bottom: 10px;
+}
+
+.field-validation-error {
+    color: #c0392b;
+    font-size: 0.9em;
 }

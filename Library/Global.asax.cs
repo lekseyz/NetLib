@@ -1,8 +1,8 @@
 using Library.Infrastructure.Misc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using Library.Domain.Repositories;
+using Library.Domain.Services;
+using Library.Application;
+using Library.Infrastructure;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -21,6 +21,8 @@ namespace Library
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             DataBase.Init();
+
+            UnityConfig.RegisterComponents();
         }
     }
 }

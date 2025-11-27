@@ -1,0 +1,59 @@
+﻿@model Library.Models.Clients.ClientDetailsViewModel
+@{
+    ViewBag.Title = "Клиент";
+}
+
+<h1>Клиент:</h1>
+
+<div class="panel">
+    <p><strong>Имя: </strong>@Model.Name</p>
+    <p><strong>Паспорт: </strong>@Model.PassportId</p>
+    <p><strong>Дата регистрации: </strong>@Model.RegistrationDate</p>
+    <p><strong>Здесь можно бар код генерировать: </strong>@Model.Id</p>
+</div>
+
+<div class="panel">
+    <h2>История выдач</h2>
+
+    @if (Model.Notes != null && Model.Notes.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>ISBN</th>
+                    <th>Дата выдачи</th>
+                    <th>Срок возврата</th>
+                    <th>Фактический возврат</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var note in Model.Notes)
+                {
+                    <tr>
+                        <td>@note.Book.Title</td>
+                        <td>@note.Book.Isbn</td>
+                        <td>@note.IssueDate.ToString("dd.MM.yyyy")</td>
+                        <td>@note.DueDate.ToString("dd.MM.yyyy")</td>
+                        <td>
+                            @(
+                            note.ReturnDate.HasValue
+                                ? note.ReturnDate.Value.ToString("dd.MM.yyyy")
+                                : "Ещё не возвращена"
+                         )
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Клиент ещё не брал ни одной книги.</p>
+    }
+</div>
+
+<p>
+    @Html.ActionLink("Назад к списку", "Index", "Client")
+</p>
+
