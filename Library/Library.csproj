@@ -233,6 +233,10 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Scripts\App\BookDetails.js" />
+    <Content Include="Scripts\App\BookIndex.js" />
+    <Content Include="Scripts\App\ClientDetails.js" />
+    <Content Include="Scripts\App\ClientIndex.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />

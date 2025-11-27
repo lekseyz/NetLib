@@ -9,7 +9,7 @@
     <button id="add-book-btn" class="add-button" title="Добавить книгу">+</button>
 </div>
 
-<div id="new-book-form" class="panel" style="@(Model.IsFormOpen ? "" : "display:none;")">
+<div id="new-book-form" class="panel" style="@(Model.IsFormOpen ? "display:block" : "display:none;")">
     <h2>Новая книга</h2>
 
     @Html.ValidationSummary(true)
@@ -87,18 +87,5 @@
     }
 </div>
 
-@section Scripts {
-    <script>(function () {
-        var btn = document.getElementById('add-book-btn');
-        var form = document.getElementById('new-book-form');
-    
-        btn.addEventListener('click', function () {
-            if (form.style.display === 'none' || form.style.display === '') {
-                form.style.display = 'block';
-            } else {
-                form.style.display = 'none';
-            }
-        });
-    })();</script>
-}
+@section Scripts { <script src="~/Scripts/App/BookIndex.js"></script> }
 

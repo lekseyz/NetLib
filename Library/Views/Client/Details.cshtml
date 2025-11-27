@@ -39,7 +39,7 @@
     }
 </div>
 
-<div id="borrow-form" class="panel" style="@(Model.IsBorrowFormOpen ? "" : "display:none;")">
+<div id="borrow-form" class="panel" style="@(Model.IsBorrowFormOpen ? "display:block;" : "display:none;")">
     <h2>Выдача книги</h2>
 
     @Html.ValidationSummary(true)
@@ -51,7 +51,7 @@
 
         <div class="form-row">
             <label for="borrow-isbn">ISBN</label>
-            <input type="text" id="borrow-isbn" name="isbn" />
+            <input type="text" id="borrow-isbn" name="isbnBorrow" />
         </div>
 
         <button type="submit" class="primary-btn">Выдать</button>
@@ -123,35 +123,5 @@
     @Html.ActionLink("Назад к списку", "Index", "Client")
 </p>
 
-@section Scripts {
-
-    <script>
-        (function () {
-            var borrowBtn = document.getElementById('borrow-btn');
-            var borrowForm = document.getElementById('borrow-form');
-
-
-            borrowBtn.addEventListener('click', function () {
-                if (borrowForm.style.display === 'none' || borrowForm.style.display === '') {
-                    borrowForm.style.display = 'block';
-                } else {
-                    borrowForm.style.display = 'none';
-                }
-            });
-        })();
-
-        (function () {
-            var btn = document.getElementById('edit-client-btn');
-            var form = document.getElementById('edit-client-form');
-
-            btn.addEventListener('click', function () {
-
-            if (form.style.display === 'none' || form.style.display === '') {
-                form.style.display = 'block';
-            } else {
-                form.style.display = 'none';
-            }
-     });
-     })();</script>
-}
+@section Scripts { <script src="~/Scripts/App/ClientDetails.js"></script> }
 

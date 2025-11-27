@@ -6,7 +6,6 @@ using Library.Models.Clients;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Library.Controllers
@@ -135,9 +134,9 @@ namespace Library.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Borrow(Guid clientId, string isbn)
+        public ActionResult Borrow(Guid clientId, string isbnBorrow)
         {
-            if (clientId == Guid.Empty || string.IsNullOrWhiteSpace(isbn))
+            if (clientId == Guid.Empty || string.IsNullOrWhiteSpace(isbnBorrow))
             {
                 ModelState.AddModelError("", "Нужно указать ISBN.");
             }
@@ -145,8 +144,6 @@ namespace Library.Controllers
             if (!ModelState.IsValid)
             {
                 var client = _clientService.Get(clientId);
-                if (client == null)
-                    return HttpNotFound();
 
                 var model = BuildClientDetailsModel(client);
 
@@ -154,13 +151,14 @@ namespace Library.Controllers
                 return View("Details", model);
             }
 
-            var book = _libraryService.Get(isbn);
-            if (book == null)
+            try
             {
-                ModelState.AddModelError("404", "Книга с таким ISBN не найдена.");
+                var book = _libraryService.Get(isbnBorrow);
+            }
+            catch(KeyNotFoundException)
+            {
+                ModelState.AddModelError("", "Книга с таким ISBN не найдена.");
                 var client = _clientService.Get(clientId);
-                if (client == null)
-                    return HttpNotFound();
 
                 var model = BuildClientDetailsModel(client);
 
@@ -168,7 +166,20 @@ namespace Library.Controllers
                 return View("Details", model);
             }
 
-            _libraryService.BorrowBook(isbn, clientId);
+            try
+            {
+                _libraryService.BorrowBook(isbnBorrow, clientId);
+            }
+            catch (InvalidOperationException)
+            {
+                ModelState.AddModelError("", "Нет больше доступных книг.");
+                var client = _clientService.Get(clientId);
+
+                var model = BuildClientDetailsModel(client);
+
+                model.IsBorrowFormOpen = true;
+                return View("Details", model);
+            }
 
             return RedirectToAction("Details", new { id = clientId });
         }

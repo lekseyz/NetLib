@@ -9,12 +9,12 @@
     <button id="add-client-btn" class="add-button" title="Добавить клиента">+</button>
 </div>
 
-<div id="new-client-form" class="panel" style=@(Model.IsFormOpen ? "" : "display:none;")>
+<div id="new-client-form" class="panel" style=@(Model.IsFormOpen ? "display:block" : "display:none;")>
     <h2>Новый клиент</h2>
 
     @Html.ValidationSummary(true)
 
-    @using (Html.BeginForm("Index", "Client", FormMethod.Post))
+    @using (Html.BeginForm("Index", "Client", FormMethod.Post, new {id = "new-client-form-data"}))
     {
         @Html.AntiForgeryToken()
 
@@ -65,17 +65,4 @@
     }
 </div>
 
-@section Scripts {
-    <script>(function () {
-        var btn = document.getElementById('add-client-btn');
-        var form = document.getElementById('new-client-form');
-
-        btn.addEventListener('click', function () {
-            if (form.style.display === 'none' || form.style.display === '') {
-                form.style.display = 'block';
-            } else {
-                form.style.display = 'none';
-            }
-        });
-    })();</script>
-}
+@section Scripts { <script src="~/Scripts/App/ClientIndex.js"></script> }
