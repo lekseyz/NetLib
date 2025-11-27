@@ -50,7 +50,7 @@ WHERE Id = @Id;";
 
             using (IDbConnection connection = DataBase.CreateConnection())
             {
-                connection.Execute(sql, new { Id = id });
+                connection.Execute(sql, new { Id = id.ToString() });
             }
         }
 
@@ -67,7 +67,7 @@ WHERE Id = @Id;";
                     .QuerySingleOrDefault<ClientEntity>(sql, new { Id = id.ToString() });
 
                 if (entity == null)
-                    return null; // или бросить исключение, если так принято в домене
+                    return null;
 
                 return ToDomain(entity);
             }
