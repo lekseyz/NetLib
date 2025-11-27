@@ -5,7 +5,7 @@ using System.Data;
 using Dapper;
 
 using Library.Domain.Entities;
-using Library.Infrastructure.Abstraction;
+using Library.Domain.Repositories;
 using Library.Infrastructure.Entities;
 using Library.Infrastructure.Misc;
 
@@ -64,7 +64,7 @@ WHERE Id = @Id;";
             using (IDbConnection connection = DataBase.CreateConnection())
             {
                 var entity = connection
-                    .QuerySingleOrDefault<ClientEntity>(sql, new { Id = id });
+                    .QuerySingleOrDefault<ClientEntity>(sql, new { Id = id.ToString() });
 
                 if (entity == null)
                     return null; // или бросить исключение, если так принято в домене
@@ -90,7 +90,7 @@ FROM Clients;";
         {
             return new ClientEntity
             {
-                Id = client.Id,
+                Id = client.Id.ToString(),
                 Name = client.Name,
                 PassportId = client.PassportId,
                 RegistrationDate = client.RegistrationDate
@@ -99,7 +99,7 @@ FROM Clients;";
 
         private static Client ToDomain(ClientEntity entity)
         {
-            return new Client(entity.Id, entity.Name, entity.PassportId, entity.RegistrationDate);
+            return new Client(Guid.Parse(entity.Id), entity.Name, entity.PassportId, entity.RegistrationDate);
         }
     }
 }

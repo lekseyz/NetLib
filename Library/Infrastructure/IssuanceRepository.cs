@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using Library.Domain.Entities;
-using Library.Infrastructure.Abstraction;
+using Library.Domain.Repositories;
 using Library.Infrastructure.Entities;
 using Library.Infrastructure.Misc;
 using System;
@@ -16,8 +16,8 @@ namespace Library.Infrastructure
         {
             var sql = @"
 SELECT 
-    i.Id, i.UserId, i.Isbn, i.IssueDate, i.DueDate, i.ReturnDate
-    c.Id, c.Name, c.PassportId, c.RegistrationDate
+    i.Id, i.UserId, i.Isbn, i.IssueDate, i.DueDate, i.ReturnDate,
+    c.Id, c.Name, c.PassportId, c.RegistrationDate,
     b.Isbn, b.Title, b.Author, b.Description, b.Amount
 FROM Issues i
 JOIN Clients c
@@ -49,8 +49,8 @@ WHERE i.Isbn = @Isbn";
         {
             var sql = @"
 SELECT 
-    i.Id, i.UserId, i.Isbn, i.IssueDate, i.DueDate, i.ReturnDate
-    c.Id, c.Name, c.PassportId, c.RegistrationDate
+    i.Id, i.UserId, i.Isbn, i.IssueDate, i.DueDate, i.ReturnDate,
+    c.Id, c.Name, c.PassportId, c.RegistrationDate,
     b.Isbn, b.Title, b.Author, b.Description, b.Amount
 FROM Issues i
 JOIN Clients c
@@ -73,7 +73,7 @@ WHERE i.UserId = @UserId";
                             ReturnDate = issue.ReturnDate
                         };
                     },
-                    new { UserId = userId },
+                    new { UserId = userId.ToString() },
                     splitOn: "Id,Isbn");
             }
         }
@@ -82,11 +82,11 @@ WHERE i.UserId = @UserId";
         {
             var sql = @"
 INSERT INTO Issues (Id, UserId, Isbn, IssueDate, DueDate, ReturnDate)
-VALUES (Id, @UserId, @Isbn, @IssueDate, @DueDate, NULL);";
+VALUES (@Id, @UserId, @Isbn, @IssueDate, @DueDate, NULL);";
 
             using (var connection = DataBase.CreateConnection())
             {
-                connection.Execute(sql, new {Id = Guid.NewGuid(), UserId = userId, Isbn = isbn, IssueDate = DateTime.Today,  ReturnDate = DateTime.Today.AddMonths(6)});
+                connection.Execute(sql, new {Id = Guid.NewGuid().ToString(), UserId = userId.ToString(), Isbn = isbn, IssueDate = DateTime.Today,  DueDate = DateTime.Today.AddMonths(6)});
             }
         }
 
@@ -103,7 +103,7 @@ WHERE Id = @Id;";
 
             using (var connection = DataBase.CreateConnection())
             {
-                var id = connection.QueryFirst<Guid>(sql0, new { UserId = userId, Isbn = isbn });
+                var id = connection.QueryFirst<string>(sql0, new { UserId = userId.ToString(), Isbn = isbn });
                 connection.Execute(sql, new { Id = id, ReturnDate = DateTime.Today });
             }
         }
@@ -112,7 +112,7 @@ WHERE Id = @Id;";
         {
             return new ClientEntity
             {
-                Id = client.Id,
+                Id = client.Id.ToString(),
                 Name = client.Name,
                 PassportId = client.PassportId,
                 RegistrationDate = client.RegistrationDate
@@ -121,7 +121,7 @@ WHERE Id = @Id;";
 
         private static Client ToDomain(ClientEntity entity)
         {
-            return new Client(entity.Id, entity.Name, entity.PassportId, entity.RegistrationDate);
+            return new Client(Guid.Parse(entity.Id), entity.Name, entity.PassportId, entity.RegistrationDate);
         }
         private BookEntity ToEntity(Book book)
         {

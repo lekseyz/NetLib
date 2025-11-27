@@ -1,10 +1,9 @@
-﻿// Test/Repositories/ClientRepositoryTests.cs
-using Library.Domain.Entities;
-using Library.Infrastructure.Abstraction;
+﻿using Library.Domain.Entities;
+using Library.Domain.Repositories;
 using Library.Infrastructure;
 using Test.DB;
 
-namespace Test.Repositories
+namespace Test.DB
 {
     [TestFixture]
     public class ClientRepositoryTests : DatabaseTestBase
